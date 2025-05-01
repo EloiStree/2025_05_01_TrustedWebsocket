@@ -1,0 +1,23 @@
+
+{                                                                                
+  "name": "be.elab.trustedwss",                              
+  "displayName": "Trusted Websocket Client",                        
+  "version": "0.0.1",                         
+  "unity": "2018.1",                             
+  "unityRelease": "",                             
+  "description": "This tool allows to conect at websocket that dont use password on a side thread.",                         
+  "keywords": ["Script","Tool"],                       
+  "dependencies":{},     
+  "relatedPackages":{},     
+  "samples" : [],     
+  "author" : {
+"name":"",
+"mail":"",
+"url":""},     
+  "repository":{
+"type":"Git",
+"url":"https://github.com/EloiStree/2025_05_01_TrustedWebsocket.git",
+"footprint":"",
+"revision":""},     
+  "category": "Script"                   
+} 
