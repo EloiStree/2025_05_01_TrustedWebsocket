@@ -135,9 +135,14 @@ namespace Eloi.TrustedWss {
             m_client.StartConnectionThread();
             m_client.m_onPrint+= (str =>
             {
-                Debug.Log(str);
+                m_lastPrint = str;
             });
         }
+
+        [TextArea(2,6)]
+        public string m_lastPrint = "";
+
+
 
 
         public void PushBytesToSend(byte[] bytes)

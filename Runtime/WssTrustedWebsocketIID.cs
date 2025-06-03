@@ -33,19 +33,21 @@ namespace Eloi.TrustedWss
 
         public void FlushReceivedWaitingInQueue(Action<byte[]> toRedirect)
         {
-            if (m_receivedBytesQueue == null) return;
-            if (m_receivedBytesQueue.Count <= 0) return;
+            if (toRedirect == null) return;
+
             lock (m_receivedBytesQueue)
             {
-                if (m_receivedBytesQueue.Count <= 0) return;
-            }
-            if (toRedirect == null) return;
-            while (m_receivedBytesQueue.Count > 0)
-            {
-                byte[] bytes = m_receivedBytesQueue.Dequeue();
-                toRedirect?.Invoke(bytes);
-            }
+                if (m_receivedBytesQueue == null || m_receivedBytesQueue.Count <= 0) return;
 
+                while (m_receivedBytesQueue.Count > 0)
+                {
+                    byte[]? bytes = m_receivedBytesQueue?.Dequeue();
+                    if (bytes != null)
+                    {
+                        toRedirect?.Invoke(bytes);
+                    }
+                }
+            }
         }
         public void FlushReceivedWaitingInQueue(Action<string> toRedirect)
         {
@@ -63,7 +65,6 @@ namespace Eloi.TrustedWss
                 string str = m_receivedStringQueue.Dequeue();
                 toRedirect?.Invoke(str);
             }
-
         }
 
         public WssTrustedWebsocketIID(bool autoStart)
@@ -204,10 +205,15 @@ namespace Eloi.TrustedWss
                             while (m_sendBytesQueue.Count > 0)
                             {
                                 byte[] bytesToSend = m_sendBytesQueue.Dequeue();
+                                if (bytesToSend == null) continue;
+                                if (bytesToSend.Length <= 0) continue;
+
                                 client.SendAsync(new ArraySegment<byte>(bytesToSend), WebSocketMessageType.Binary, true, CancellationToken.None).Wait();
                             }
                             while (m_sendStringQueue.Count > 0)
                             {
+                                if (m_sendStringQueue.Count <= 0) continue;
+                                if (m_sendStringQueue == null) continue;
                                 string textToSend = m_sendStringQueue.Dequeue();
                                 byte[] bytesToSend = System.Text.Encoding.UTF8.GetBytes(textToSend);
                                 client.SendAsync(new ArraySegment<byte>(bytesToSend), WebSocketMessageType.Text, true, CancellationToken.None).Wait();
@@ -243,6 +249,9 @@ namespace Eloi.TrustedWss
 
         public void AddQueueBytes(byte[] bytes)
         {
+            if (bytes == null) return;
+            if (bytes.Length <= 0) return;
+            if (m_clientWebSocket == null) return;
             lock (m_sendBytesQueue)
             {
                 m_sendBytesQueue.Enqueue(bytes);
@@ -251,6 +260,9 @@ namespace Eloi.TrustedWss
 
         public void AddToQueueString(string text)
         {
+            if (text == null) return;
+            if (text.Length <= 0) return;
+            if (m_clientWebSocket == null) return;
             lock (m_sendStringQueue)
             {
                 m_sendStringQueue.Enqueue(text);
